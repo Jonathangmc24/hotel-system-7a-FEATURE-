@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Formulario - Interfaz de Usuario</title>
+<style>
+  :root{
+    --bg: #f3f6fb;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --muted: #6b7280;
+    --error: #dc2626;
+    --success: #16a34a;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(180deg, #e6eefc 0%, var(--bg) 100%);
+    padding:40px;
+  }
+
+  .card{
+    width:100%;
+    max-width:920px;
+    background:var(--card);
+    border-radius:14px;
+    box-shadow: 0 10px 30px rgba(16,24,40,0.08);
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:24px;
+    padding:24px;
+  }
+
+  @media (max-width:900px){
+    .card{ grid-template-columns: 1fr; }
+  }
+
+  .form{
+    padding:8px 4px;
+  }
+
+  h2{
+    margin:0 0 8px 0;
+    font-size:20px;
+  }
+  p.lead{
+    margin:0 0 18px 0;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width:560px){ .grid{ grid-template-columns: 1fr; } }
+
+  label{
+    display:block;
+    font-size:13px;
+    color:#111827;
+    margin-bottom:6px;
+  }
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #e6edf6;
+    background:#fff;
+    font-size:14px;
+  }
+
+  textarea{ min-height:100px; resize:vertical; }
+
+  .small{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
+  .row{
+    margin-bottom:12px;
+  }
+
+  .actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:8px;
+  }
+
+  button{
+    background:var(--accent);
+    color:white;
+    border:none;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button[disabled]{ opacity:.6; cursor:not-allowed; }
+
+  .btn-ghost{
+    background:transparent;
+    border:1px solid #e6edf6;
+    color:#111827;
+  }
+
+  .error{
+    color:var(--error);
+    font-size:13px;
+    margin-top:6px;
+  }
+
+  .side{
+    padding:6px 10px;
+    border-left:1px dashed #eef2ff;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+  }
+
+  .avatar-preview{
+    width:160px;
+    height:160px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#fff,#f3f6fb);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #e6edf6;
+    overflow:hidden;
+  }
+  .avatar-preview img{ width:100%; height:100%; object-fit:cover; }
+
+  .summary{
+    width:100%;
+    background:#fbfdff;
+    border-radius:8px;
+    padding:10px;
+    box-sizing:border-box;
+    font-size:13px;
+    color:#0f172a;
+  }
+
+  .chip { font-size:12px; background:#eef2ff; color:var(--accent); padding:6px 8px; border-radius:999px; display:inline-block; margin-right:6px; margin-top:6px; }
+
+  .toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#111827;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.3);
+    display:none;
+  }
+
+  .required{ color:var(--accent); margin-left:6px; font-weight:700; }
+</style>
+</head>
+<body>
+
+  <div class="card" role="region" aria-labelledby="formTitle">
+    <div class="form" aria-live="polite">
+      <h2 id="formTitle">Registro de Usuario</h2>
+      <p class="lead">Formulario de ejemplo con validación y preview — personalízalo como quieras.</p>
+
+      <form id="userForm" novalidate>
+        <div class="grid">
+          <div class="row">
+            <label for="nombre">Nombre <span class="required" aria-hidden="true">*</span></label>
+            <input id="nombre" name="nombre" type="text" required minlength="2" placeholder="Ej. Juan" />
+            <div class="error" id="error-nombre" aria-live="polite"></div>
+          </div>
+
+          <div class="row">
+            <label for="apellido">Apellido</label>
+            <input id="apellido" name="apellido" type="text" placeholder="Ej. Pérez" />
+            <div class="error" id="error-apellido"></div>
+          </div>
+
+          <div class="row">
+            <label for="email">Correo electrónico <span class="required">*</span></label>
+            <input id="email" name="email" type="email" required placeholder="nombre@ejemplo.com" />
+            <div class="error" id="error-email"></div>
+          </div>
+
+          <div class="row">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" name="telefono" type="tel" inputmode="tel" placeholder="+52 812 345 6789" />
+            <div class="error" id="error-telefono"></div>
+          </div>
+
+          <div class="row">
+            <label for="password">Contraseña <span class="required">*</span></label>
+            <input id="password" name="password" type="password" required minlength="6" placeholder="Mín 6 caracteres" />
+            <div class="error" id="error-password"></div>
+          </div>
+
+          <div class="row">
+            <label for="password2">Confirmar contraseña</label>
+            <input id="password2" name="password2" type="password" placeholder="Repite la contraseña" />
+            <div class="error" id="error-password2"></div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <label for="rol">Rol</label>
+          <select id="rol" name="rol" aria-label="Selecciona un rol">
+            <option value="user">Usuario</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <fieldset style="border:none;padding:0;margin:0;">
+            <legend style="font-size:13px;margin-bottom:6px;color:#111827;">Preferencias</legend>
+            <label><input type="checkbox" name="newsletter" id="newsletter"> Recibir newsletter</label><br>
+            <label><input type="checkbox" name="updates" id="updates"> Actualizaciones del producto</label>
+          </fieldset>
+        </div>
+
+        <div class="row">
+          <label for="bio">Biografía / Comentarios</label>
+          <textarea id="bio" name="bio" placeholder="Cuéntanos algo sobre ti..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="submitBtn">Crear cuenta</button>
+          <button type="button" class="btn-ghost" id="resetBtn">Limpiar</button>
+          <div class="small" aria-hidden="true">Los campos marcados con <span class="required">*</span> son obligatorios.</div>
+        </div>
+      </form>
+    </div>
+
+    <aside class="side" aria-label="Panel lateral de vista previa">
+      <div class="avatar-preview" id="avatarPreview" title="Vista previa de imagen">
+        <span style="color:var(--muted);font-size:13px;">Sin imagen</span>
+      </div>
+
+      <label style="width:100%;text-align:center;">
+        <input type="file" id="avatar" accept="image/*" style="display:none;">
+        <button type="button" class="btn-ghost" id="uploadBtn" aria-controls="avatar">Subir avatar</button>
+      </label>
+
+      <div class="summary" id="summaryBox" aria-live="polite">
+        <strong>Resumen</strong>
+        <div id="summaryContent" style="margin-top:8px;font-size:13px;color:var(--muted);">
+          Nombre: — <br>
+          Correo: — <br>
+          Rol: Usuario <br>
+          Preferencias: — <br>
+        </div>
+      </div>
+
+      <div style="width:100%;text-align:center;">
+        <div class="chip" id="statusChip">Incompleto</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // Elementos
+  const form = document.getElementById('userForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const inputs = {
+    nombre: document.getElementById('nombre'),
+    apellido: document.getElementById('apellido'),
+    email: document.getElementById('email'),
+    telefono: document.getElementById('telefono'),
+    password: document.getElementById('password'),
+    password2: document.getElementById('password2'),
+    rol: document.getElementById('rol'),
+    bio: document.getElementById('bio'),
+    newsletter: document.getElementById('newsletter'),
+    updates: document.getElementById('updates')
+  };
+  const errors = {
+    nombre: document.getElementById('error-nombre'),
+    apellido: document.getElementById('error-apellido'),
+    email: document.getElementById('error-email'),
+    telefono: document.getElementById('error-telefono'),
+    password: document.getElementById('error-password'),
+    password2: document.getElementById('error-password2')
+  };
+  const avatar = document.getElementById('avatar');
+  const avatarPreview = document.getElementById('avatarPreview');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const summaryContent = document.getElementById('summaryContent');
+  const statusChip = document.getElementById('statusChip');
+  const toast = document.getElementById('toast');
+
+  // Helper: mostrar toast
+  function showToast(msg, timeout = 3000) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, timeout);
+  }
+
+  // Validaciones simples
+  function validateName() {
+    const v = inputs.nombre.value.trim();
+    if (!v) { errors.nombre.textContent = 'El nombre es obligatorio.'; return false; }
+    if (v.length < 2) { errors.nombre.textContent = 'El nombre debe tener 2 caracteres mínimo.'; return false; }
+    errors.nombre.textContent = '';
+    return true;
+  }
+
+  function validateEmail() {
+    const v = inputs.email.value.trim();
+    if (!v) { errors.email.textContent = 'El correo es obligatorio.'; return false; }
+    // simple regex de email
+    const re = /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/;
+    if (!re.test(v)) { errors.email.textContent = 'Ingresa un correo válido.'; return false; }
+    errors.email.textContent = '';
+    return true;
+  }
+
+  function validatePassword() {
+    const p = inputs.password.value;
+    if (!p) { errors.password.textContent = 'La contraseña es obligatoria.'; return false; }
+    if (p.length < 6) { errors.password.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return false; }
+    errors.password.textContent = '';
+    return true;
+  }
+
+  function validatePasswordConfirm() {
+    const p = inputs.password.value;
+    const p2 = inputs.password2.value;
+    if (p2 && p !== p2) { errors.password2.textContent = 'Las contraseñas no coinciden.'; return false; }
+    errors.password2.textContent = '';
+    return true;
+  }
+
+  function validatePhone() {
+    const t = inputs.telefono.value.trim();
+    if (!t) { errors.telefono.textContent = ''; return true; } // opcional
+    // permite números, espacios, +, -, paréntesis
+    const re = /^[0-9+()\\-\\s]{6,20}$/;
+    if (!re.test(t)) { errors.telefono.textContent = 'Formato de teléfono inválido.'; return false; }
+    errors.telefono.textContent = '';
+    return true;
+  }
+
+  // Actualizar resumen lateral
+  function updateSummary(){
+    const name = inputs.nombre.value.trim() || '—';
+    const email = inputs.email.value.trim() || '—';
+    const rol = inputs.rol.value;
+    const prefs = [];
+    if (inputs.newsletter.checked) prefs.push('Newsletter');
+    if (inputs.updates.checked) prefs.push('Actualizaciones');
+    const prefsText = prefs.length ? prefs.join(', ') : '—';
+    summaryContent.innerHTML = `
+      Nombre: ${escapeHtml(name)}<br>
+      Correo: ${escapeHtml(email)}<br>
+      Rol: ${escapeHtml(rol)}<br>
+      Preferencias: ${escapeHtml(prefsText)}<br>
+    `;
+
+    // estado chip
+    const valid = validateName() && validateEmail() && validatePassword();
+    statusChip.textContent = valid ? 'Listo para enviar' : 'Incompleto';
+    statusChip.style.background = valid ? 'rgba(16,185,129,0.12)' : '#eef2ff';
+    statusChip.style.color = valid ? 'var(--success)' : 'var(--accent)';
+  }
+
+  // escape para evitar XSS en la demo
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  // Listeners de validación en tiempo real
+  inputs.nombre.addEventListener('input', () => { validateName(); updateSummary(); });
+  inputs.email.addEventListener('input', () => { validateEmail(); updateSummary(); });
+  inputs.password.addEventListener('input', () => { validatePassword(); validatePasswordConfirm(); updateSummary(); });
+  inputs.password2.addEventListener('input', () => { validatePasswordConfirm(); updateSummary(); });
+  inputs.telefono.addEventListener('input', () => { validatePhone(); updateSummary(); });
+  inputs.rol.addEventListener('change', updateSummary);
+  inputs.newsletter.addEventListener('change', updateSummary);
+  inputs.updates.addEventListener('change', updateSummary);
+  inputs.apellido.addEventListener('input', updateSummary);
+  inputs.bio.addEventListener('input', updateSummary);
+
+  // Manejo de avatar / preview
+  uploadBtn.addEventListener('click', () => avatar.click());
+  avatar.addEventListener('change', (e) => {
+    const file = avatar.files && avatar.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('Selecciona un archivo de imagen.'); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      avatarPreview.innerHTML = '<img src="'+reader.result+'" alt="Avatar">';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Reset botón
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    avatarPreview.innerHTML = '<span style="color:var(--muted);font-size:13px;">Sin imagen</span>';
+    updateSummary();
+  });
+
+  // Submit
+  form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    // forzar validaciones
+    const ok = validateName() & validateEmail() & validatePassword() & validatePasswordConfirm() & validatePhone();
+    if (!ok) {
+      showToast('Corrige los errores del formulario.');
+      updateSummary();
+      return;
+    }
+
+    // Simular envío y mostrar resumen
+    const data = {
+      nombre: inputs.nombre.value.trim(),
+      apellido: inputs.apellido.value.trim(),
+      email: inputs.email.value.trim(),
+      telefono: inputs.telefono.value.trim(),
+      rol: inputs.rol.value,
+      bio: inputs.bio.value.trim(),
+      newsletter: inputs.newsletter.checked,
+      updates: inputs.updates.checked,
+    };
+
+    // Aquí podrías enviar con fetch() a tu API
+    // fetch('/api/register', { method:'POST', body: JSON.stringify(data), headers:{'Content-Type':'application/json'} })
+
+    // Mostrar modal sencillo con resumen (a modo de demostración)
+    showToast('Cuenta creada con éxito 🎉', 2500);
+    console.log('Datos del formulario (simulado):', data);
+
+    // opción: limpiar formulario después de enviar
+    // form.reset();
+    // updateSummary();
+  });
+
+  // inicializar resumen
+  updateSummary();
+</script>
+</body>
+</html>
